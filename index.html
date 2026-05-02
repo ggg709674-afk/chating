@@ -933,12 +933,7 @@ function renderAsCode(div, name, text, type) {
     div.appendChild(mkSpan('cm-comment', `# === ${text} ===`))
   } else {
     const speaker = type === 'me' ? '나' : (name || '?')
-    div.appendChild(mkSpan('cm-fn', 'log'))
-    div.appendChild(document.createTextNode('.'))
-    div.appendChild(mkSpan('cm-fn', 'info'))
-    div.appendChild(document.createTextNode('('))
     div.appendChild(mkSpan('cm-str', `"${speaker}: ${text}"`))
-    div.appendChild(document.createTextNode(')'))
     div.appendChild(mkSpan('cm-comment', `  # ${time}`))
   }
 }
