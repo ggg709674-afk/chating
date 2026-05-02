@@ -3,27 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0a0a0f">
+<meta name="theme-color" content="#ffffff">
 <title>스텔스 메신저</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f;
-    --bg-2: #14141c;
-    --surface: rgba(255,255,255,0.04);
-    --surface-2: rgba(255,255,255,0.07);
-    --border: rgba(255,255,255,0.08);
-    --text: #e8e8ec;
-    --text-dim: #8a8a94;
-    --text-faint: #5a5a64;
-    --accent: #7c5cff;
-    --accent-2: #a78bff;
-    --accent-glow: rgba(124,92,255,.4);
-    --bubble-me: linear-gradient(135deg, #7c5cff 0%, #5a3ee0 100%);
-    --bubble-other: rgba(255,255,255,0.08);
-    --danger: #ff5c7c;
+    --bg: #f6f8fa;
+    --surface: #ffffff;
+    --surface-2: #f3f4f6;
+    --border: #e1e4e8;
+    --border-strong: #d0d7de;
+    --text: #1f2328;
+    --text-dim: #656d76;
+    --text-faint: #8b929b;
+    --accent: #0969da;
+    --accent-hover: #0860c5;
+    --accent-soft: #ddf4ff;
+    --bubble-me: linear-gradient(135deg, #0969da 0%, #218bff 100%);
+    --bubble-other: #f3f4f6;
+    --danger: #cf222e;
+    --success: #1a7f37;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,25 +40,9 @@
     color: var(--text);
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
-    position: relative;
-  }
-
-  /* 배경 그라데이션 효과 */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(circle at 15% 10%, rgba(124,92,255,0.15) 0%, transparent 40%),
-      radial-gradient(circle at 85% 90%, rgba(255,92,124,0.08) 0%, transparent 40%),
-      radial-gradient(circle at 50% 50%, rgba(92,255,200,0.04) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
   }
 
   #app {
-    position: relative;
-    z-index: 1;
     height: 100%;
     max-width: 720px;
     margin: 0 auto;
@@ -65,6 +50,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    transition: opacity 0.15s;
   }
 
   /* 헤더 */
@@ -73,21 +59,21 @@
     padding: 4px 4px 0;
   }
   .logo {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 17px; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--text);
   }
   .logo-icon {
     width: 32px; height: 32px;
     border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: linear-gradient(135deg, var(--accent), #218bff);
     display: flex; align-items: center; justify-content: center;
     font-size: 16px;
-    box-shadow: 0 4px 16px var(--accent-glow);
+    box-shadow: 0 2px 8px rgba(9, 105, 218, 0.25);
   }
-  .logo-text { background: linear-gradient(135deg, #fff, #b8b8c8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
   .badge {
-    font-size: 10px; padding: 3px 8px;
+    font-size: 11px; padding: 4px 9px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 999px;
@@ -95,90 +81,101 @@
     font-weight: 500;
   }
 
-  /* 카드 공통 */
+  /* 카드 */
   .card {
     background: var(--surface);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: 14px;
   }
 
-  /* Setup 화면 */
+  /* Setup */
   #setup {
     margin: auto 0;
+    padding: 24px;
     display: flex; flex-direction: column;
-    gap: 16px;
-    animation: fadeIn 0.3s ease;
+    gap: 14px;
+    animation: fadeIn 0.25s ease;
   }
   #setup h3 {
-    font-size: 22px; font-weight: 700; letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #fff, #c8c8d8);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 2px;
   }
-  #setup p {
+  #setup .subtitle {
     font-size: 13px; color: var(--text-dim); line-height: 1.5;
+    margin-bottom: 6px;
   }
-  .input-wrap {
-    position: relative;
+  .field-group {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .field-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-dim);
+  }
+  .field-row {
+    display: flex; gap: 6px;
   }
   .field {
     width: 100%;
-    padding: 14px 16px;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    padding: 11px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
     color: var(--text);
-    font-size: 15px;
+    font-size: 14px;
     font-family: inherit;
-    transition: all 0.15s;
+    transition: all 0.12s;
   }
   .field:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
   .field::placeholder { color: var(--text-faint); }
+  .icon-btn {
+    flex-shrink: 0;
+    width: 42px; height: 42px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 16px;
+    transition: all 0.12s;
+  }
+  .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+  .field-hint {
+    font-size: 11px; color: var(--text-faint);
+  }
 
   .btn {
-    padding: 14px 20px;
-    border: 0; border-radius: 12px;
-    font-size: 15px; font-weight: 600;
+    padding: 12px 18px;
+    border: 0; border-radius: 10px;
+    font-size: 14px; font-weight: 600;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.12s;
   }
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: var(--accent);
     color: #fff;
-    box-shadow: 0 4px 16px var(--accent-glow);
   }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
-  .btn-primary:active { transform: translateY(0); }
-
-  .btn-ghost {
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  .btn-ghost:hover { background: var(--surface-2); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:active { transform: scale(0.98); }
 
   /* 채팅 영역 */
   #chat-wrap {
     flex: 1; min-height: 0;
     display: flex; flex-direction: column;
     gap: 10px;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.25s ease;
   }
 
   #share {
     display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
+    padding: 10px 12px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 12px;
     color: var(--text-dim);
   }
@@ -187,70 +184,69 @@
     text-overflow: ellipsis; white-space: nowrap;
     color: var(--text);
   }
-  #share-info .label { color: var(--text-faint); margin-right: 6px; }
+  #share-info .label { color: var(--text-faint); margin-right: 6px; font-weight: 500; }
   #copy-btn {
     flex-shrink: 0;
-    padding: 6px 12px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    padding: 5px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
     color: var(--text);
     font-size: 12px; font-weight: 500;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.12s;
+    font-family: inherit;
   }
-  #copy-btn:hover { background: var(--accent); border-color: var(--accent); }
-  #copy-btn.copied { background: #4caf80; border-color: #4caf80; color: #fff; }
+  #copy-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #copy-btn.copied { background: var(--success); border-color: var(--success); color: #fff; }
 
   #messages-card {
     flex: 1; min-height: 0;
     display: flex; flex-direction: column;
-    padding: 0;
     overflow: hidden;
   }
 
   #messages {
     flex: 1; min-height: 0;
     overflow-y: auto;
-    padding: 16px;
-    display: flex; flex-direction: column; gap: 8px;
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 6px;
     scroll-behavior: smooth;
   }
   #messages::-webkit-scrollbar { width: 6px; }
   #messages::-webkit-scrollbar-track { background: transparent; }
-  #messages::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 3px; }
+  #messages::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 
   .msg {
     max-width: 78%;
-    padding: 10px 14px;
-    border-radius: 16px;
-    font-size: 14px; line-height: 1.4;
+    padding: 8px 13px;
+    border-radius: 14px;
+    font-size: 14px; line-height: 1.45;
     word-wrap: break-word;
-    animation: msgIn 0.2s ease;
+    animation: msgIn 0.18s ease;
   }
   @keyframes msgIn {
-    from { opacity: 0; transform: translateY(4px); }
+    from { opacity: 0; transform: translateY(3px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .msg.me {
     background: var(--bubble-me);
     color: #fff;
     align-self: flex-end;
-    border-bottom-right-radius: 6px;
-    box-shadow: 0 2px 12px rgba(124,92,255,.25);
+    border-bottom-right-radius: 4px;
   }
   .msg.other {
     background: var(--bubble-other);
     color: var(--text);
     align-self: flex-start;
-    border-bottom-left-radius: 6px;
+    border-bottom-left-radius: 4px;
   }
   .msg.sys {
     align-self: center;
     background: transparent;
     color: var(--text-faint);
     font-size: 11px;
-    padding: 4px 10px;
+    padding: 3px 8px;
     max-width: 100%;
     text-align: center;
   }
@@ -262,61 +258,104 @@
     font-weight: 600;
   }
 
-  /* 입력 영역 */
+  /* 입력바 */
   #input-bar {
-    display: flex; gap: 8px;
-    padding: 10px;
+    display: flex; gap: 6px;
+    padding: 8px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 12px;
   }
   #input {
     flex: 1;
-    padding: 10px 14px;
+    padding: 9px 12px;
     background: transparent;
     border: 0;
     color: var(--text);
-    font-size: 15px;
+    font-size: 14px;
     font-family: inherit;
   }
   #input:focus { outline: none; }
   #input::placeholder { color: var(--text-faint); }
   #send {
-    width: 40px; height: 40px;
-    border: 0; border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    width: 36px; height: 36px;
+    border: 0; border-radius: 8px;
+    background: var(--accent);
     color: #fff; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
+    transition: all 0.12s;
     flex-shrink: 0;
   }
-  #send:hover { transform: scale(1.05); }
-  #send:active { transform: scale(0.95); }
-  #send svg { width: 18px; height: 18px; }
+  #send:hover { background: var(--accent-hover); }
+  #send:active { transform: scale(0.92); }
+  #send svg { width: 16px; height: 16px; }
 
-  /* 스텔스 컨트롤 (PC 전용) */
-  #stealth { display: none; }
+  /* ── 스텔스 핸들 (PC 전용, 항상 visible) ── */
+  #stealth-handle { display: none; }
+
   @media (min-width: 768px) and (hover: hover) {
-    #stealth {
-      display: flex; align-items: center; gap: 12px;
-      padding: 8px 14px;
+    #stealth-handle {
+      display: flex;
+      position: fixed;
+      bottom: 18px; right: 18px;
+      z-index: 9999;
+      align-items: center;
+      gap: 0;
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: rgba(31, 35, 40, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
+      padding: 0;
+    }
+    #stealth-handle::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      transition: opacity 0.15s;
+      opacity: 1;
+    }
+    #stealth-handle:hover, #stealth-handle.expanded {
+      width: 280px; height: 40px;
+      padding: 0 14px;
+      gap: 10px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 12px; color: var(--text-dim);
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
-    #stealth-label {
-      display: flex; align-items: center; gap: 6px;
-      font-weight: 500; color: var(--text);
+    #stealth-handle:hover::before, #stealth-handle.expanded::before {
+      opacity: 0;
+    }
+    #stealth-handle .stealth-content {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s 0.05s;
+      font-size: 12px; color: var(--text-dim);
       white-space: nowrap;
     }
+    #stealth-handle:hover .stealth-content,
+    #stealth-handle.expanded .stealth-content {
+      opacity: 1; pointer-events: auto;
+    }
+    #stealth-icon { font-size: 13px; }
     #stealth-slider {
       flex: 1;
       -webkit-appearance: none; appearance: none;
-      height: 4px;
-      background: var(--surface-2);
+      height: 3px;
+      background: var(--border-strong);
       border-radius: 2px;
       outline: none;
+      cursor: pointer;
     }
     #stealth-slider::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none;
@@ -324,23 +363,19 @@
       border-radius: 50%;
       background: var(--accent);
       cursor: pointer;
-      box-shadow: 0 0 0 3px var(--accent-glow);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     #stealth-slider::-moz-range-thumb {
       width: 14px; height: 14px;
-      border: 0; border-radius: 50%;
+      border: 2px solid #fff; border-radius: 50%;
       background: var(--accent);
       cursor: pointer;
     }
     #stealth-value {
       width: 36px; text-align: right;
       font-variant-numeric: tabular-nums;
-      color: var(--text);
-    }
-    #stealth-hint {
-      font-size: 11px;
-      color: var(--text-faint);
-      white-space: nowrap;
+      color: var(--text); font-weight: 500;
     }
     kbd {
       font-family: inherit; font-size: 10px;
@@ -351,21 +386,11 @@
     }
   }
 
-  body.hidden #app { opacity: 0; pointer-events: none; }
-  body.hidden::after {
-    content: '🕶️ 숨김 모드 (ESC로 복귀)';
-    position: fixed; bottom: 16px; right: 16px;
-    z-index: 100;
-    font-size: 11px; color: var(--text-faint);
-    padding: 6px 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-  }
+  body.hidden #app { opacity: 0 !important; pointer-events: none; }
+  body.hidden #stealth-handle { opacity: 0; pointer-events: none; }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -381,17 +406,31 @@
   <header>
     <div class="logo">
       <div class="logo-icon">🕶️</div>
-      <div class="logo-text">스텔스 메신저</div>
+      <span>스텔스 메신저</span>
     </div>
     <span class="badge" id="status-badge">대기중</span>
   </header>
 
   <div id="setup" class="card">
-    <h3>들어가기 전에</h3>
-    <p>닉네임만 정하면 입장 끝.<br>같은 링크를 가진 사람끼리만 대화하고, <strong style="color:var(--text)">창을 닫으면 메시지는 모두 사라집니다.</strong></p>
-    <div class="input-wrap">
-      <input id="nickname" class="field" type="text" placeholder="닉네임 (최대 20자)" maxlength="20" autocomplete="off">
+    <div>
+      <h3>방 이름과 닉네임</h3>
+      <p class="subtitle">같은 방 이름을 가진 사람끼리 대화합니다.<br>창을 닫으면 메시지는 모두 사라져요.</p>
     </div>
+
+    <div class="field-group">
+      <span class="field-label">방 이름</span>
+      <div class="field-row">
+        <input id="room-input" class="field" type="text" placeholder="방 이름 (한글/영문/숫자)" maxlength="40" autocomplete="off">
+        <button id="random-btn" class="icon-btn" title="랜덤 생성" type="button">🎲</button>
+      </div>
+      <span class="field-hint">예: <code>밤9시</code>, <code>둘만의비밀</code> — 추측하기 어려운 이름 추천</span>
+    </div>
+
+    <div class="field-group">
+      <span class="field-label">닉네임</span>
+      <input id="nickname" class="field" type="text" placeholder="이 방에서 쓸 이름" maxlength="20" autocomplete="off">
+    </div>
+
     <button id="enter-btn" class="btn btn-primary">입장하기</button>
   </div>
 
@@ -399,13 +438,6 @@
     <div id="share">
       <span id="share-info"><span class="label">공유 링크</span><span id="link"></span></span>
       <button id="copy-btn">복사</button>
-    </div>
-
-    <div id="stealth">
-      <span id="stealth-label">🕶️ 투명도</span>
-      <input id="stealth-slider" type="range" min="15" max="100" value="100">
-      <span id="stealth-value">100%</span>
-      <span id="stealth-hint"><kbd>ESC</kbd> 즉시 숨김</span>
     </div>
 
     <div id="messages-card" class="card">
@@ -423,6 +455,16 @@
   </div>
 </div>
 
+<!-- 스텔스 핸들 (PC 전용, 항상 visible) -->
+<div id="stealth-handle" title="투명도 조절 — 클릭/드래그">
+  <div class="stealth-content">
+    <span id="stealth-icon">🕶️</span>
+    <input id="stealth-slider" type="range" min="15" max="100" value="100">
+    <span id="stealth-value">100%</span>
+    <kbd>ESC</kbd>
+  </div>
+</div>
+
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 
@@ -431,20 +473,40 @@ const SUPABASE_ANON_KEY = 'sb_publishable_wLKHYM62ImdgoT4EvasMag_ikSGtKTO'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-let roomId = location.hash.slice(1)
-if (!roomId) {
-  roomId = Math.random().toString(36).slice(2, 10)
-  location.hash = roomId
-}
-
 const $ = (id) => document.getElementById(id)
 let nickname = ''
 let channel = null
+let roomId = ''
+
+// URL 해시에서 방 이름 가져오기
+function getRoomFromHash() {
+  const h = location.hash.slice(1)
+  return h ? decodeURIComponent(h) : ''
+}
+
+function randomRoomId() {
+  return Math.random().toString(36).slice(2, 10)
+}
+
+// 초기 셋업
+const initialRoom = getRoomFromHash()
+if (initialRoom) {
+  $('room-input').value = initialRoom
+} else {
+  $('room-input').value = randomRoomId()
+}
+
+$('random-btn').addEventListener('click', () => {
+  $('room-input').value = randomRoomId()
+})
 
 $('enter-btn').addEventListener('click', enterRoom)
 $('nickname').addEventListener('keypress', (e) => { if (e.key === 'Enter') enterRoom() })
+$('room-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') $('nickname').focus() })
+
 $('send').addEventListener('click', sendMsg)
 $('input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg() })
+
 $('copy-btn').addEventListener('click', () => {
   navigator.clipboard.writeText(location.href)
   const btn = $('copy-btn')
@@ -456,29 +518,37 @@ $('copy-btn').addEventListener('click', () => {
   }, 1500)
 })
 
-// 스텔스 슬라이더 — 앱 컨테이너 투명도 조절
+// 스텔스 슬라이더 — #app에만 투명도 적용 (핸들은 항상 visible)
 $('stealth-slider').addEventListener('input', (e) => {
   const v = e.target.value
   $('app').style.opacity = v / 100
   $('stealth-value').textContent = v + '%'
 })
 
-// ESC = 즉시 숨기기 / 복귀 토글
+// ESC = 즉시 숨김 토글
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     document.body.classList.toggle('hidden')
+    e.preventDefault()
   }
 })
 
 function enterRoom() {
+  const room = $('room-input').value.trim()
   const name = $('nickname').value.trim()
-  if (!name) {
-    $('nickname').focus()
-    $('nickname').style.borderColor = 'var(--danger)'
-    setTimeout(() => { $('nickname').style.borderColor = '' }, 1000)
+
+  if (!room) {
+    flashError($('room-input'))
     return
   }
+  if (!name) {
+    flashError($('nickname'))
+    return
+  }
+
+  roomId = room
   nickname = name
+  location.hash = encodeURIComponent(room)
 
   $('setup').style.display = 'none'
   $('chat-wrap').style.display = 'flex'
@@ -500,11 +570,21 @@ function enterRoom() {
     .subscribe((status) => {
       if (status === 'SUBSCRIBED') {
         $('status-badge').textContent = '● 연결됨'
-        $('status-badge').style.color = '#4caf80'
-        addMsg(null, `방 ID: ${roomId}`, 'sys')
+        $('status-badge').style.color = 'var(--success)'
+        addMsg(null, `방: ${roomId}`, 'sys')
         channel.send({ type: 'broadcast', event: 'join', payload: { name: nickname } })
       }
     })
+}
+
+function flashError(el) {
+  el.focus()
+  el.style.borderColor = 'var(--danger)'
+  el.style.boxShadow = '0 0 0 3px rgba(207,34,46,0.15)'
+  setTimeout(() => {
+    el.style.borderColor = ''
+    el.style.boxShadow = ''
+  }, 1200)
 }
 
 function sendMsg() {
