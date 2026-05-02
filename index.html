@@ -492,12 +492,37 @@ function randomRoomId() {
   return Math.random().toString(36).slice(2, 10)
 }
 
+// 팝업 모드 감지 (URL에 ?popup=1 있으면 팝업창)
+const isPopup = new URLSearchParams(location.search).has('popup')
+
 // 초기 셋업
 const initialRoom = getRoomFromHash()
 if (initialRoom) {
   $('room-input').value = initialRoom
 } else {
   $('room-input').value = randomRoomId()
+}
+
+// 팝업창이고 localStorage에 자동입장 정보 있으면 바로 입장
+if (isPopup) {
+  const stored = localStorage.getItem('autoEnter')
+  if (stored) {
+    try {
+      const data = JSON.parse(stored)
+      if (Date.now() - data.ts < 5000) {
+        $('room-input').value = data.room
+        $('nickname').value = data.name
+        // 클린업
+        localStorage.removeItem('autoEnter')
+        // 자동 입장
+        setTimeout(() => enterRoom(true), 50)
+      } else {
+        localStorage.removeItem('autoEnter')
+      }
+    } catch (e) {
+      localStorage.removeItem('autoEnter')
+    }
+  }
 }
 
 $('random-btn').addEventListener('click', () => {
@@ -537,7 +562,7 @@ document.addEventListener('keydown', (e) => {
   }
 })
 
-function enterRoom() {
+function enterRoom(skipPopup) {
   const room = $('room-input').value.trim()
   const name = $('nickname').value.trim()
 
@@ -548,6 +573,29 @@ function enterRoom() {
   if (!name) {
     flashError($('nickname'))
     return
+  }
+
+  // 일반 탭에서 입장 → 작은 팝업창으로 열기
+  if (!isPopup && !skipPopup) {
+    const w = 380, h = 600
+    const left = Math.max(0, (screen.availWidth - w) / 2)
+    const top = Math.max(0, (screen.availHeight - h) / 2)
+    localStorage.setItem('autoEnter', JSON.stringify({
+      room, name, ts: Date.now()
+    }))
+    const popup = window.open(
+      location.pathname + '?popup=1#' + encodeURIComponent(room),
+      'stealthchat',
+      `popup=yes,width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no,status=no`
+    )
+    if (popup) {
+      // 팝업 열림 성공 → 원래 탭은 안내 메시지로 전환
+      showPopupOpenedMessage()
+      return
+    } else {
+      // 팝업 차단됨 → 그대로 현재 창에서 진행
+      localStorage.removeItem('autoEnter')
+    }
   }
 
   roomId = room
@@ -589,6 +637,17 @@ function flashError(el) {
     el.style.borderColor = ''
     el.style.boxShadow = ''
   }, 1200)
+}
+
+function showPopupOpenedMessage() {
+  $('setup').innerHTML = `
+    <div style="text-align:center; padding: 20px 0;">
+      <div style="font-size: 48px; margin-bottom: 16px;">🕶️</div>
+      <h3 style="margin-bottom: 8px;">스텔스 창으로 이동했어요</h3>
+      <p class="subtitle" style="margin-bottom: 16px;">작은 창에서 채팅이 시작됩니다.<br>이 탭은 닫아도 돼요.</p>
+      <button class="btn btn-primary" onclick="window.close()">이 탭 닫기</button>
+    </div>
+  `
 }
 
 function sendMsg() {
