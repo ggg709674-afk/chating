@@ -2,53 +2,424 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>채팅</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<title>스텔스 메신저</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --bg-2: #14141c;
+    --surface: rgba(255,255,255,0.04);
+    --surface-2: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --text: #e8e8ec;
+    --text-dim: #8a8a94;
+    --text-faint: #5a5a64;
+    --accent: #7c5cff;
+    --accent-2: #a78bff;
+    --accent-glow: rgba(124,92,255,.4);
+    --bubble-me: linear-gradient(135deg, #7c5cff 0%, #5a3ee0 100%);
+    --bubble-other: rgba(255,255,255,0.08);
+    --danger: #ff5c7c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    max-width: 640px; margin: 0 auto; padding: 16px;
-    background: #f5f5f7;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
   }
-  h2 { margin: 8px 0 16px; }
+
+  /* 배경 그라데이션 효과 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(124,92,255,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(255,92,124,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(92,255,200,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 헤더 */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 4px 0;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+  .logo-text { background: linear-gradient(135deg, #fff, #b8b8c8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .badge {
+    font-size: 10px; padding: 3px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* 카드 공통 */
   .card {
-    background: #fff; border-radius: 12px; padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
   }
-  #setup input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-  #setup button { width: 100%; margin-top: 10px; padding: 12px; border: 0; border-radius: 8px; background: #111; color: #fff; font-size: 16px; cursor: pointer; }
-  #share { font-size: 13px; color: #555; padding: 8px 12px; background: #f0f0f4; border-radius: 8px; word-break: break-all; margin-bottom: 10px; }
-  #share button { margin-left: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
-  #messages { height: 60vh; overflow-y: auto; padding: 8px; background: #fafafa; border-radius: 8px; }
-  .msg { margin: 6px 0; padding: 6px 10px; border-radius: 8px; max-width: 80%; word-wrap: break-word; }
-  .msg.me { background: #2d7cf0; color: #fff; margin-left: auto; }
-  .msg.other { background: #e8e8ed; color: #111; }
-  .msg.sys { background: transparent; color: #888; font-size: 12px; text-align: center; max-width: 100%; }
-  .msg .name { display: block; font-size: 11px; opacity: .8; margin-bottom: 2px; }
-  #input-row { display: flex; gap: 8px; margin-top: 10px; }
-  #input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-  #send { padding: 10px 20px; border: 0; border-radius: 8px; background: #2d7cf0; color: #fff; font-size: 16px; cursor: pointer; }
+
+  /* Setup 화면 */
+  #setup {
+    margin: auto 0;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+  }
+  #setup h3 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff, #c8c8d8);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  #setup p {
+    font-size: 13px; color: var(--text-dim); line-height: 1.5;
+  }
+  .input-wrap {
+    position: relative;
+  }
+  .field {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .field::placeholder { color: var(--text-faint); }
+
+  .btn {
+    padding: 14px 20px;
+    border: 0; border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface-2); }
+
+  /* 채팅 영역 */
+  #chat-wrap {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  #share {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  #share-info {
+    flex: 1; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+    color: var(--text);
+  }
+  #share-info .label { color: var(--text-faint); margin-right: 6px; }
+  #copy-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  #copy-btn:hover { background: var(--accent); border-color: var(--accent); }
+  #copy-btn.copied { background: #4caf80; border-color: #4caf80; color: #fff; }
+
+  #messages-card {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #messages {
+    flex: 1; min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 8px;
+    scroll-behavior: smooth;
+  }
+  #messages::-webkit-scrollbar { width: 6px; }
+  #messages::-webkit-scrollbar-track { background: transparent; }
+  #messages::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 3px; }
+
+  .msg {
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px; line-height: 1.4;
+    word-wrap: break-word;
+    animation: msgIn 0.2s ease;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.me {
+    background: var(--bubble-me);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 2px 12px rgba(124,92,255,.25);
+  }
+  .msg.other {
+    background: var(--bubble-other);
+    color: var(--text);
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+  }
+  .msg.sys {
+    align-self: center;
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 11px;
+    padding: 4px 10px;
+    max-width: 100%;
+    text-align: center;
+  }
+  .msg .name {
+    display: block;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  /* 입력 영역 */
+  #input-bar {
+    display: flex; gap: 8px;
+    padding: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  #input {
+    flex: 1;
+    padding: 10px 14px;
+    background: transparent;
+    border: 0;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+  }
+  #input:focus { outline: none; }
+  #input::placeholder { color: var(--text-faint); }
+  #send {
+    width: 40px; height: 40px;
+    border: 0; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  #send:hover { transform: scale(1.05); }
+  #send:active { transform: scale(0.95); }
+  #send svg { width: 18px; height: 18px; }
+
+  /* 스텔스 컨트롤 (PC 전용) */
+  #stealth { display: none; }
+  @media (min-width: 768px) and (hover: hover) {
+    #stealth {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 12px; color: var(--text-dim);
+    }
+    #stealth-label {
+      display: flex; align-items: center; gap: 6px;
+      font-weight: 500; color: var(--text);
+      white-space: nowrap;
+    }
+    #stealth-slider {
+      flex: 1;
+      -webkit-appearance: none; appearance: none;
+      height: 4px;
+      background: var(--surface-2);
+      border-radius: 2px;
+      outline: none;
+    }
+    #stealth-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    #stealth-slider::-moz-range-thumb {
+      width: 14px; height: 14px;
+      border: 0; border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+    #stealth-value {
+      width: 36px; text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    #stealth-hint {
+      font-size: 11px;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+    kbd {
+      font-family: inherit; font-size: 10px;
+      padding: 1px 5px; border-radius: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+  }
+
+  body.hidden #app { opacity: 0; pointer-events: none; }
+  body.hidden::after {
+    content: '🕶️ 숨김 모드 (ESC로 복귀)';
+    position: fixed; bottom: 16px; right: 16px;
+    z-index: 100;
+    font-size: 11px; color: var(--text-faint);
+    padding: 6px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 모바일 */
+  @media (max-width: 767px) {
+    #app { padding: 12px; }
+    .msg { max-width: 85%; }
+  }
 </style>
 </head>
 <body>
-<h2>채팅 (테스트)</h2>
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🕶️</div>
+      <div class="logo-text">스텔스 메신저</div>
+    </div>
+    <span class="badge" id="status-badge">대기중</span>
+  </header>
 
-<div id="setup" class="card">
-  <p>닉네임을 입력하고 입장하세요.<br><small style="color:#888">같은 링크를 가진 사람끼리만 대화할 수 있어요.</small></p>
-  <input id="nickname" type="text" placeholder="닉네임" maxlength="20">
-  <button id="enter-btn">입장</button>
-</div>
-
-<div id="chat" class="card" style="display:none">
-  <div id="share">
-    <strong>공유 링크:</strong> <span id="link"></span>
-    <button id="copy-btn">복사</button>
+  <div id="setup" class="card">
+    <h3>들어가기 전에</h3>
+    <p>닉네임만 정하면 입장 끝.<br>같은 링크를 가진 사람끼리만 대화하고, <strong style="color:var(--text)">창을 닫으면 메시지는 모두 사라집니다.</strong></p>
+    <div class="input-wrap">
+      <input id="nickname" class="field" type="text" placeholder="닉네임 (최대 20자)" maxlength="20" autocomplete="off">
+    </div>
+    <button id="enter-btn" class="btn btn-primary">입장하기</button>
   </div>
-  <div id="messages"></div>
-  <div id="input-row">
-    <input id="input" type="text" placeholder="메시지 입력..." maxlength="500">
-    <button id="send">전송</button>
+
+  <div id="chat-wrap" style="display:none">
+    <div id="share">
+      <span id="share-info"><span class="label">공유 링크</span><span id="link"></span></span>
+      <button id="copy-btn">복사</button>
+    </div>
+
+    <div id="stealth">
+      <span id="stealth-label">🕶️ 투명도</span>
+      <input id="stealth-slider" type="range" min="15" max="100" value="100">
+      <span id="stealth-value">100%</span>
+      <span id="stealth-hint"><kbd>ESC</kbd> 즉시 숨김</span>
+    </div>
+
+    <div id="messages-card" class="card">
+      <div id="messages"></div>
+    </div>
+
+    <div id="input-bar">
+      <input id="input" type="text" placeholder="메시지 입력..." maxlength="500" autocomplete="off">
+      <button id="send" aria-label="전송">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12l14-7-7 14-2-5-5-2z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -60,7 +431,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_wLKHYM62ImdgoT4EvasMag_ikSGtKTO'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-// URL 해시(#abc123)에서 방 ID 가져오기, 없으면 생성
 let roomId = location.hash.slice(1)
 if (!roomId) {
   roomId = Math.random().toString(36).slice(2, 10)
@@ -77,18 +447,44 @@ $('send').addEventListener('click', sendMsg)
 $('input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg() })
 $('copy-btn').addEventListener('click', () => {
   navigator.clipboard.writeText(location.href)
-  $('copy-btn').textContent = '복사됨'
-  setTimeout(() => { $('copy-btn').textContent = '복사' }, 1500)
+  const btn = $('copy-btn')
+  btn.textContent = '복사됨'
+  btn.classList.add('copied')
+  setTimeout(() => {
+    btn.textContent = '복사'
+    btn.classList.remove('copied')
+  }, 1500)
+})
+
+// 스텔스 슬라이더 — 앱 컨테이너 투명도 조절
+$('stealth-slider').addEventListener('input', (e) => {
+  const v = e.target.value
+  $('app').style.opacity = v / 100
+  $('stealth-value').textContent = v + '%'
+})
+
+// ESC = 즉시 숨기기 / 복귀 토글
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.body.classList.toggle('hidden')
+  }
 })
 
 function enterRoom() {
   const name = $('nickname').value.trim()
-  if (!name) { alert('닉네임을 입력하세요'); return }
+  if (!name) {
+    $('nickname').focus()
+    $('nickname').style.borderColor = 'var(--danger)'
+    setTimeout(() => { $('nickname').style.borderColor = '' }, 1000)
+    return
+  }
   nickname = name
 
   $('setup').style.display = 'none'
-  $('chat').style.display = 'block'
+  $('chat-wrap').style.display = 'flex'
   $('link').textContent = location.href
+  $('status-badge').textContent = '연결중...'
+  $('input').focus()
 
   channel = supabase.channel(`room-${roomId}`, {
     config: { broadcast: { self: false } }
@@ -103,7 +499,9 @@ function enterRoom() {
     })
     .subscribe((status) => {
       if (status === 'SUBSCRIBED') {
-        addMsg(null, `채팅방 입장 (방 ID: ${roomId})`, 'sys')
+        $('status-badge').textContent = '● 연결됨'
+        $('status-badge').style.color = '#4caf80'
+        addMsg(null, `방 ID: ${roomId}`, 'sys')
         channel.send({ type: 'broadcast', event: 'join', payload: { name: nickname } })
       }
     })
@@ -120,6 +518,7 @@ function sendMsg() {
   })
   addMsg(nickname, text, 'me')
   input.value = ''
+  input.focus()
 }
 
 function addMsg(name, text, type) {
