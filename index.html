@@ -530,7 +530,7 @@ $('random-btn').addEventListener('click', () => {
   $('room-input').value = randomRoomId()
 })
 
-$('enter-btn').addEventListener('click', enterRoom)
+$('enter-btn').addEventListener('click', () => enterRoom())
 $('nickname').addEventListener('keypress', (e) => { if (e.key === 'Enter') enterRoom() })
 $('room-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') $('nickname').focus() })
 
