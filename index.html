@@ -291,47 +291,50 @@
   #send:active { transform: scale(0.92); }
   #send svg { width: 16px; height: 16px; }
 
-  /* ── 스텔스 핸들 (PC 전용, 항상 visible) ── */
+  /* ── 스텔스 핸들 (PC, 항상 visible) ── */
   #stealth-handle { display: none; }
 
-  @media (min-width: 768px) and (hover: hover) {
+  @media (min-width: 600px) {
     #stealth-handle {
       display: flex;
       position: fixed;
-      bottom: 18px; right: 18px;
+      bottom: 20px; right: 20px;
       z-index: 9999;
       align-items: center;
       gap: 0;
-      width: 18px; height: 18px;
+      width: 26px; height: 26px;
       border-radius: 999px;
-      background: rgba(31, 35, 40, 0.35);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: linear-gradient(135deg, #a3c9e8, #c8dff5);
+      box-shadow: 0 2px 10px rgba(163, 201, 232, 0.6), 0 0 0 4px rgba(163, 201, 232, 0.15);
       cursor: pointer;
       overflow: hidden;
       transition: all 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
       padding: 0;
+      animation: pulseHandle 2.5s ease-in-out infinite;
+    }
+    @keyframes pulseHandle {
+      0%, 100% { box-shadow: 0 2px 10px rgba(163, 201, 232, 0.6), 0 0 0 4px rgba(163, 201, 232, 0.15); }
+      50% { box-shadow: 0 2px 14px rgba(163, 201, 232, 0.8), 0 0 0 8px rgba(163, 201, 232, 0.08); }
     }
     #stealth-handle::before {
-      content: '';
+      content: '🕶️';
       position: absolute;
       left: 50%; top: 50%;
       transform: translate(-50%, -50%);
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #fff;
+      font-size: 12px;
       transition: opacity 0.15s;
       opacity: 1;
+      filter: grayscale(0.3);
     }
     #stealth-handle:hover, #stealth-handle.expanded {
-      width: 280px; height: 40px;
+      width: 300px; height: 42px;
       padding: 0 14px;
       gap: 10px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border-radius: 21px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      animation: none;
     }
     #stealth-handle:hover::before, #stealth-handle.expanded::before {
       opacity: 0;
