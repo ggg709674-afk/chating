@@ -404,6 +404,190 @@
     #app { padding: 12px; }
     .msg { max-width: 85%; }
   }
+
+  /* ════════════════════════════════════════
+     스크립트 모드 (VS Code Python 위장)
+     ════════════════════════════════════════ */
+  body.script-mode {
+    background: #1e1e1e;
+    color: #d4d4d4;
+  }
+  body.script-mode #app {
+    background: #1e1e1e;
+    padding: 0;
+    max-width: 100%;
+    gap: 0;
+  }
+
+  /* VS Code titlebar 위장 */
+  body.script-mode header {
+    background: #3c3c3c;
+    border-bottom: 1px solid #2d2d30;
+    padding: 6px 12px;
+    color: #cccccc;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+  }
+  body.script-mode .logo { gap: 6px; font-size: 12px; color: #cccccc; font-weight: 400; letter-spacing: 0; }
+  body.script-mode .logo-icon {
+    background: transparent; box-shadow: none;
+    width: auto; height: auto; font-size: 12px;
+    border-radius: 0;
+  }
+  body.script-mode .logo span { color: #cccccc; }
+  body.script-mode .badge {
+    background: transparent; border: 0;
+    color: #858585; font-size: 11px;
+  }
+
+  /* 탭 표시줄 */
+  body.script-mode header::after {
+    content: '📄 session.py    ●';
+    display: block;
+    background: #1e1e1e;
+    color: #ffffff;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-top: 1px solid #2d2d30;
+    border-right: 1px solid #2d2d30;
+    margin: 6px -12px -6px;
+    width: fit-content;
+    border-bottom: 1px solid #1e1e1e;
+    position: relative;
+    top: 1px;
+  }
+
+  /* 공유 링크 자리 - 코드 헤더 주석으로 위장 */
+  body.script-mode #share {
+    background: #1e1e1e;
+    border: 0;
+    border-radius: 0;
+    padding: 8px 12px 0 60px;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    color: #6a9955;
+  }
+  body.script-mode #share-info { color: #6a9955; }
+  body.script-mode #share-info .label { color: #6a9955; }
+  body.script-mode #share-info::before { content: '# room: '; }
+  body.script-mode #share-info .label { display: none; }
+  body.script-mode #copy-btn {
+    background: transparent; border-color: #3e3e42;
+    color: #858585; font-size: 11px;
+  }
+  body.script-mode #copy-btn:hover { background: #2d2d30; color: #fff; }
+
+  body.script-mode #chat-wrap {
+    background: #1e1e1e;
+    gap: 0;
+    padding: 0;
+  }
+
+  body.script-mode #messages-card {
+    background: #1e1e1e;
+    border: 0;
+    border-radius: 0;
+  }
+
+  body.script-mode #messages {
+    background: #1e1e1e;
+    font-family: 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    padding: 8px 12px 8px 56px;
+    counter-reset: linenum;
+    gap: 0;
+    position: relative;
+  }
+  body.script-mode #messages::before {
+    content: '';
+    position: absolute;
+    left: 46px; top: 0; bottom: 0;
+    width: 1px;
+    background: #2d2d30;
+  }
+
+  body.script-mode .msg {
+    background: transparent !important;
+    color: #d4d4d4 !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    align-self: stretch !important;
+    font-family: 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    counter-increment: linenum;
+    position: relative;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+  body.script-mode .msg::before {
+    content: counter(linenum);
+    position: absolute;
+    left: -52px;
+    width: 38px;
+    text-align: right;
+    color: #858585;
+    user-select: none;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+  }
+
+  body.script-mode .cm-fn { color: #dcdcaa; }
+  body.script-mode .cm-str { color: #ce9178; }
+  body.script-mode .cm-comment { color: #6a9955; font-style: italic; }
+  body.script-mode .cm-kw { color: #569cd6; }
+  body.script-mode .cm-num { color: #b5cea8; }
+
+  body.script-mode .msg.sys { color: #6a9955 !important; font-style: italic; }
+  body.script-mode .msg .name { display: none; }
+
+  /* 입력바 — 터미널 프롬프트처럼 */
+  body.script-mode #input-bar {
+    background: #1e1e1e;
+    border: 0;
+    border-top: 1px solid #2d2d30;
+    border-radius: 0;
+    padding: 6px 12px 8px 56px;
+    position: relative;
+    counter-increment: linenum;
+  }
+  body.script-mode #input-bar::before {
+    content: '>>>';
+    position: absolute;
+    left: 12px;
+    color: #569cd6;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 36px;
+    font-weight: 600;
+  }
+  body.script-mode #input {
+    color: #d4d4d4;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    caret-color: #569cd6;
+  }
+  body.script-mode #input::placeholder { color: #6a6a6a; font-style: italic; }
+  body.script-mode #send {
+    background: #0e639c;
+    box-shadow: none;
+    border-radius: 4px;
+  }
+  body.script-mode #send:hover { background: #1177bb; box-shadow: none; }
+
+  /* 상태바 (하단) */
+  body.script-mode #app::after {
+    content: 'Python 3.11.4   UTF-8   Ln 99, Col 1   Spaces: 4';
+    display: block;
+    background: #007acc;
+    color: #ffffff;
+    padding: 3px 12px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 11px;
+  }
 </style>
 </head>
 <body>
@@ -614,6 +798,10 @@ function enterRoom(skipPopup) {
   nickname = name
   location.hash = encodeURIComponent(room)
 
+  // 스크립트 모드 활성화 (VS Code Python 위장)
+  document.body.classList.add('script-mode')
+  document.title = 'session.py - Visual Studio Code'
+
   $('setup').style.display = 'none'
   $('chat-wrap').style.display = 'flex'
   $('link').textContent = location.href
@@ -708,20 +896,51 @@ function sendMsg() {
 function addMsg(name, text, type) {
   const div = document.createElement('div')
   div.className = `msg ${type}`
-  if (type === 'sys') {
-    div.textContent = text
+
+  if (document.body.classList.contains('script-mode')) {
+    // 스크립트(VS Code) 모드: Python 코드 라인 형식
+    renderAsCode(div, name, text, type)
   } else {
-    if (type === 'other' && name) {
-      const n = document.createElement('span')
-      n.className = 'name'
-      n.textContent = name
-      div.appendChild(n)
+    // 일반 채팅 버블 모드
+    if (type === 'sys') {
+      div.textContent = text
+    } else {
+      if (type === 'other' && name) {
+        const n = document.createElement('span')
+        n.className = 'name'
+        n.textContent = name
+        div.appendChild(n)
+      }
+      div.appendChild(document.createTextNode(text))
     }
-    div.appendChild(document.createTextNode(text))
   }
+
   const messages = $('messages')
   messages.appendChild(div)
   messages.scrollTop = messages.scrollHeight
+}
+
+function renderAsCode(div, name, text, type) {
+  const time = new Date().toTimeString().slice(0, 5)
+  const mkSpan = (cls, content) => {
+    const s = document.createElement('span')
+    s.className = cls
+    s.textContent = content
+    return s
+  }
+
+  if (type === 'sys') {
+    div.appendChild(mkSpan('cm-comment', `# === ${text} ===`))
+  } else {
+    const speaker = type === 'me' ? '나' : (name || '?')
+    div.appendChild(mkSpan('cm-fn', 'log'))
+    div.appendChild(document.createTextNode('.'))
+    div.appendChild(mkSpan('cm-fn', 'info'))
+    div.appendChild(document.createTextNode('('))
+    div.appendChild(mkSpan('cm-str', `"${speaker}: ${text}"`))
+    div.appendChild(document.createTextNode(')'))
+    div.appendChild(mkSpan('cm-comment', `  # ${time}`))
+  }
 }
 </script>
 </body>
