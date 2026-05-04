@@ -292,10 +292,10 @@
   #send:active { transform: scale(0.92); }
   #send svg { width: 16px; height: 16px; }
 
-  /* ── 스텔스 핸들 (PC, 항상 visible) ── */
+  /* ── 스텔스 핸들 (항상 visible) ── */
   #stealth-handle { display: none; }
 
-  @media (min-width: 600px) {
+  @media (min-width: 320px) {
     #stealth-handle {
       display: flex;
       position: fixed;
@@ -541,8 +541,12 @@
   body.script-mode .cm-kw { color: #569cd6; }
   body.script-mode .cm-num { color: #b5cea8; }
 
-  body.script-mode .msg.sys { color: #6a9955 !important; font-style: italic; }
+  body.script-mode .msg.sys { color: #6a9955 !important; font-style: italic; text-align: center; }
   body.script-mode .msg .name { display: none; }
+
+  /* 내 메시지는 우측 정렬 (채팅 느낌) */
+  body.script-mode .msg.me { text-align: right; }
+  body.script-mode .msg.me .cm-str { color: #9cdcfe; }  /* 살짝 다른 색으로 구분 */
 
   /* 입력바 — 터미널 프롬프트처럼 */
   body.script-mode #input-bar {
